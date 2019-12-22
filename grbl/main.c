@@ -36,6 +36,14 @@ volatile uint8_t sys_rt_exec_accessory_override; // Global realtime executor bit
 #endif
 
 
+#define HIGH 0x1
+#define LOW  0x0
+
+#define INPUT 0x0
+#define OUTPUT 0x1
+#define INPUT_PULLUP 0x2
+
+
 int main(void)
 {
   // Initialize system upon power-up.
@@ -43,6 +51,16 @@ int main(void)
   settings_init(); // Load Grbl settings from EEPROM
   stepper_init();  // Configure stepper pins and interrupt timers
   system_init();   // Configure pinout pins and pin-change interrupt
+
+  // 设置4个 Z轴的GPIO
+  pinMode(Z1_PIN, OUTPUT) ;
+  pinMode(Z2_PIN, OUTPUT) ;
+  pinMode(Z3_PIN, OUTPUT) ;
+  pinMode(Z4_PIN, OUTPUT) ;
+  digitalWrite(Z1_PIN, LOW) ;
+  digitalWrite(Z2_PIN, LOW) ;
+  digitalWrite(Z3_PIN, LOW) ;
+  digitalWrite(Z4_PIN, LOW) ;
 
   memset(sys_position,0,sizeof(sys_position)); // Clear machine position.
   sei(); // Enable interrupts

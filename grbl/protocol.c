@@ -31,6 +31,9 @@ static char line[LINE_BUFFER_SIZE]; // Line to be executed. Zero-terminated.
 
 static void protocol_exec_rt_suspend();
 
+#define SET_Z_AXE(n)  Z##n##_PORT &= (1<<Z##n##_BIT) ;
+#define UNSET_Z_AXE(n)  Z##n##_PORT &= ~(1<<Z##n##_BIT) ;
+#define CONFIG_Z_AXE(zflag,n) if(zflag&(1<<(n-1))){ SET_Z_AXE(n) ; } else { UNSET_Z_AXE(n) ;}
 
 /*
   GRBL PRIMARY LOOP:
@@ -93,7 +96,27 @@ void protocol_main_loop()
         } else if (line[0] == 0) {
           // Empty or comment line. For syncing purposes.
           report_status_message(STATUS_OK);
-        } else if (line[0] == '$') {
+
+        // 切换z轴
+        } else if (line[0]=='Z' && line[1]=='=') {
+          int zflag = atoi(line+2) ;
+          for(char z=0;z<4;z++) {
+            printString("z") ;
+            printInteger(z+1) ;
+            if( (1<<z) & zflag ){
+              printString("on\n") ;
+            }
+            else {
+              printString("off\n") ;
+            }
+
+            digitalWrite(Z1_PIN+z, (1<<z) & zflag) ;
+          }
+
+          // printInteger(zflag) ;
+        }
+        
+        else if (line[0] == '$') {
           // Grbl '$' system command
           report_status_message(system_execute_line(line));
         } else if (sys.state & (STATE_ALARM | STATE_JOG)) {
@@ -385,6 +408,9 @@ void protocol_exec_rt_system()
         if (sys.step_control & STEP_CONTROL_EXECUTE_HOLD) { sys.suspend |= SUSPEND_HOLD_COMPLETE; }
         bit_false(sys.step_control,(STEP_CONTROL_EXECUTE_HOLD | STEP_CONTROL_EXECUTE_SYS_MOTION));
       } else {
+        
+        printString("done\n") ;
+
         // Motion complete. Includes CYCLE/JOG/HOMING states and jog cancel/motion cancel/soft limit events.
         // NOTE: Motion and jog cancel both immediately return to idle after the hold completes.
         if (sys.suspend & SUSPEND_JOG_CANCEL) {   // For jog cancel, flush buffers and sync positions.

@@ -25,7 +25,12 @@
 #ifndef cpu_map_h
 #define cpu_map_h
 
-
+/*
+z1: 40   PORTG 1
+z2: 41   PORTG 0
+z3: 42   PORTL 7
+z4: 43   PORTL 6
+*/
 #ifdef CPU_MAP_2560_INITIAL // (Arduino Mega 2560) Working @EliteEng
 
   // Serial port interrupt vectors
@@ -36,6 +41,28 @@
   #define STEP_DDR      DDRA
   #define STEP_PORT     PORTA
   #define STEP_PIN      PINA
+
+  #define Z1_DDR        DDRG
+  #define Z1_PORT       PORTG
+  #define Z1_BIT        1
+
+  #define Z2_DDR        DDRG
+  #define Z2_PORT       PORTG
+  #define Z2_BIT        0
+
+  #define Z3_DDR        DDRL
+  #define Z3_PORT       PORTL
+  #define Z3_BIT        7
+
+  #define Z4_DDR        DDRL
+  #define Z4_PORT       PORTL
+  #define Z4_BIT        6
+
+  #define Z1_PIN        40
+  #define Z2_PIN        41
+  #define Z3_PIN        42
+  #define Z4_PIN        43
+
   #define X_STEP_BIT    2 // MEGA2560 Digital Pin 24
   #define Y_STEP_BIT    3 // MEGA2560 Digital Pin 25
   #define Z_STEP_BIT    4 // MEGA2560 Digital Pin 26
