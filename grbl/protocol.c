@@ -100,17 +100,26 @@ void protocol_main_loop()
 
         // 主轴开关
         else if(line[0]=='S' && line[1]=='=') {
-          int value = atoi(line+2) ;
-          // 关闭
-          if(value==0) {
-            digitalWrite(SPINDLE_IN1_PIN, 1) ;
-            digitalWrite(SPINDLE_IN2_PIN, 1) ;
-            OCR5A = 0 ;
+          // 刹车
+          if(line[2]=="B") {
+              digitalWrite(SPINDLE_IN1_PIN, 0) ;
+              digitalWrite(SPINDLE_IN2_PIN, 0) ;
+              OCR5A = 0 ;
           }
           else {
-            digitalWrite(SPINDLE_IN1_PIN, value>0? 1: 0) ;
-            digitalWrite(SPINDLE_IN2_PIN, value>0? 0: 1) ;
-            OCR5A = abs(value) ;
+            int value = atoi(line+2) ;
+            // 关闭
+            if(value==0) {
+              digitalWrite(SPINDLE_IN1_PIN, 1) ;
+              digitalWrite(SPINDLE_IN2_PIN, 1) ;
+              OCR5A = 0 ;
+            }
+            // 启动/设置速度
+            else {
+              digitalWrite(SPINDLE_IN1_PIN, value>0? 1: 0) ;
+              digitalWrite(SPINDLE_IN2_PIN, value>0? 0: 1) ;
+              OCR5A = abs(value) ;
+            }
           }
           printString("ok\n") ;
         }
