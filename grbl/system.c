@@ -156,6 +156,7 @@ uint8_t system_execute_line(char *line)
           break;
       }
       break;
+    
     default :
       // Block any system command that requires the state as IDLE/ALARM. (i.e. EEPROM, homing)
       if ( !(sys.state == STATE_IDLE || sys.state == STATE_ALARM) ) { return(STATUS_IDLE_ERROR); }
@@ -185,6 +186,7 @@ uint8_t system_execute_line(char *line)
             st_go_idle(); // Set steppers to the settings idle state before returning.
             if (line[2] == 0) { system_execute_startup(line); }
           }
+          printString("done\n") ;
           break;
         case 'S' : // Puts Grbl to sleep [IDLE/ALARM]
           if ((line[2] != 'L') || (line[3] != 'P') || (line[4] != 0)) { return(STATUS_INVALID_STATEMENT); }

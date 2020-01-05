@@ -389,6 +389,14 @@ void limits_go_home(uint8_t cycle_mask)
       }
     } while (n_cycle-- > 0);
   #else
+
+
+    float homing_distance[N_AXIS];
+    for (idx=0; idx<N_AXIS; idx++) {
+      sys_position[idx] = 0;
+      homing_distance[idx] = 0.0;
+    }
+
     uint8_t limit_state, axislock, n_active_axis;
     do {
 
@@ -435,10 +443,10 @@ void limits_go_home(uint8_t cycle_mask)
       // Perform homing cycle. Planner buffer should be empty, as required to initiate the homing cycle.
       pl_data->feed_rate = homing_rate; // Set current homing rate.
       plan_buffer_line(target, pl_data); // Bypass mc_line(). Directly plan homing motion.
-
       sys.step_control = STEP_CONTROL_EXECUTE_SYS_MOTION; // Set to execute homing motion and clear existing flags.
       st_prep_buffer(); // Prep and fill segment buffer from newly planned block.
       st_wake_up(); // Initiate motion
+
       do {
         if (approach) {
           // Check limit state. Lock out cycle axes when they change.
@@ -483,6 +491,17 @@ void limits_go_home(uint8_t cycle_mask)
         }
 
       } while (STEP_MASK & axislock);
+
+
+      int32_t current_position[N_AXIS]; // Copy current state of the system position variable
+      memcpy(current_position,sys_position,sizeof(sys_position));
+      float circle_distance[N_AXIS];
+      system_convert_array_steps_to_mpos(circle_distance,current_position);
+
+      for (idx=0; idx<N_AXIS; idx++) {
+        homing_distance[idx] += circle_distance[idx] ;
+      }
+
       st_reset(); // Immediately force kill steppers and reset step segment buffer.
       delay_ms(settings.homing_debounce_delay); // Delay to allow transient dynamics to dissipate.
 
@@ -498,6 +517,17 @@ void limits_go_home(uint8_t cycle_mask)
         homing_rate = settings.homing_seek_rate;
       }
     } while (n_cycle-- > 0);
+
+
+    printString("[Homing Distance:") ;
+    for (idx=0; idx<N_AXIS; idx++) {
+      if(idx>0) 
+        printString(",") ;
+      printFloat(homing_distance[idx], 4) ;
+    }
+    printString("]\n") ;
+
+
   #endif // DEFAULTS_RAMPS_BOARD
 
   // The active cycle axes should now be homed and machine limits have been located. By

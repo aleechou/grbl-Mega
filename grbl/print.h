@@ -22,6 +22,8 @@
 #ifndef print_h
 #define print_h
 
+      
+#define _line printInteger(__LINE__) ; printString("\n") ;
 
 void printString(const char *s);
 

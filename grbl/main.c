@@ -57,10 +57,21 @@ int main(void)
   pinMode(Z2_PIN, OUTPUT) ;
   pinMode(Z3_PIN, OUTPUT) ;
   pinMode(Z4_PIN, OUTPUT) ;
+  pinMode(SPINDLE_IN1_PIN, OUTPUT) ;
+  pinMode(SPINDLE_IN2_PIN, OUTPUT) ;
+  pinMode(SPINDLE_EN_PIN, OUTPUT) ;
+
   digitalWrite(Z1_PIN, LOW) ;
   digitalWrite(Z2_PIN, LOW) ;
   digitalWrite(Z3_PIN, LOW) ;
   digitalWrite(Z4_PIN, LOW) ;
+
+  digitalWrite(SPINDLE_IN1_PIN, 0) ;
+  digitalWrite(SPINDLE_IN2_PIN, 0) ;
+  TCCR5A = _BV(COM5A1) ;                // Enable the PWM outputs OC5A, OC5B and OC5C on digital pins 46, 45 and 44
+  TCCR5B = _BV(WGM53) | _BV(CS51);      // Set phase and frequency correct PWM and prescaler of 8 on timer 5
+  ICR5 = 20000 ;
+  OCR5A = 0 ;
 
   memset(sys_position,0,sizeof(sys_position)); // Clear machine position.
   sei(); // Enable interrupts

@@ -96,9 +96,27 @@ void protocol_main_loop()
         } else if (line[0] == 0) {
           // Empty or comment line. For syncing purposes.
           report_status_message(STATUS_OK);
+        }
 
+        // 主轴开关
+        else if(line[0]=='S' && line[1]=='=') {
+          int value = atoi(line+2) ;
+          // 关闭
+          if(value==0) {
+            digitalWrite(SPINDLE_IN1_PIN, 1) ;
+            digitalWrite(SPINDLE_IN2_PIN, 1) ;
+            OCR5A = 0 ;
+          }
+          else {
+            digitalWrite(SPINDLE_IN1_PIN, value>0? 1: 0) ;
+            digitalWrite(SPINDLE_IN2_PIN, value>0? 0: 1) ;
+            OCR5A = abs(value) ;
+          }
+          printString("ok\n") ;
+        }
+        
         // 切换z轴
-        } else if (line[0]=='Z' && line[1]=='=') {
+        else if (line[0]=='Z' && line[1]=='=') {
           int zflag = atoi(line+2) ;
           for(char z=0;z<4;z++) {
             printString("z") ;
@@ -112,8 +130,6 @@ void protocol_main_loop()
 
             digitalWrite(Z1_PIN+z, (1<<z) & zflag) ;
           }
-
-          // printInteger(zflag) ;
         }
         
         else if (line[0] == '$') {
