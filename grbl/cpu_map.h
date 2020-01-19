@@ -63,8 +63,8 @@ z4: 43   PORTL 6
   #define Z3_PIN        42
   #define Z4_PIN        43
 
-  #define SPINDLE_IN1_PIN 44
-  #define SPINDLE_IN2_PIN 45
+  #define SPINDLE_IN1_PIN 6
+  #define SPINDLE_IN2_PIN 5
   #define SPINDLE_EN_PIN  46
 
   #define X_STEP_BIT    2 // MEGA2560 Digital Pin 24

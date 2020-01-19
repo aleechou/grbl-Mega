@@ -73,6 +73,12 @@ int main(void)
   ICR5 = 20000 ;
   OCR5A = 0 ;
 
+  // 设置按钮PIN
+  for(char i=0;i<sizeof(button_pins);i++){
+    pinMode(button_pins[i], INPUT_PULLUP);
+    button_pin_values[i] = digitalRead(button_pins[i]) ;
+  }
+
   memset(sys_position,0,sizeof(sys_position)); // Clear machine position.
   sei(); // Enable interrupts
 

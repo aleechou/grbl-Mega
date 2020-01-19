@@ -35,6 +35,10 @@ static void protocol_exec_rt_suspend();
 #define UNSET_Z_AXE(n)  Z##n##_PORT &= ~(1<<Z##n##_BIT) ;
 #define CONFIG_Z_AXE(zflag,n) if(zflag&(1<<(n-1))){ SET_Z_AXE(n) ; } else { UNSET_Z_AXE(n) ;}
 
+
+char button_pins[3] = {44,45,47} ;
+char button_pin_values[sizeof(button_pins)] = {1} ;
+
 /*
   GRBL PRIMARY LOOP:
 */
@@ -75,6 +79,23 @@ void protocol_main_loop()
   uint8_t char_counter = 0;
   uint8_t c;
   for (;;) {
+
+    // 检查按钮事件
+    char newval = 0 ;
+    for(char i=0;i<sizeof(button_pins);i++){
+      newval = digitalRead(button_pins[i]) ;
+      if( button_pin_values[i]!=newval ) {
+        button_pin_values[i] = newval ;
+        if(newval==0) {
+          printString("BUTTON-DOWN:") ;
+        }
+        else {
+          printString("BUTTON-UP:") ;
+        }
+        printInteger(i) ;
+        printString("\n") ;
+      }
+    }
 
     // Process one line of incoming serial data, as the data becomes available. Performs an
     // initial filtering by removing spaces and comments and capitalizing all letters.
@@ -136,9 +157,9 @@ void protocol_main_loop()
             else {
               printString("off\n") ;
             }
-
             digitalWrite(Z1_PIN+z, (1<<z) & zflag) ;
           }
+          printString("ok\n");
         }
         
         else if (line[0] == '$') {

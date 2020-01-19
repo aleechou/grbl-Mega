@@ -41,4 +41,8 @@ void protocol_auto_cycle_start();
 // Block until all buffered steps are executed
 void protocol_buffer_synchronize();
 
+
+extern char button_pins[3] ;
+extern char button_pin_values[sizeof(button_pins)] ;
+
 #endif
