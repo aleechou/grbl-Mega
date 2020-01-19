@@ -85,6 +85,13 @@ void protocol_main_loop()
     for(char i=0;i<sizeof(button_pins);i++){
       newval = digitalRead(button_pins[i]) ;
       if( button_pin_values[i]!=newval ) {
+
+        // 防抖
+        delay_ms(20) ;
+        if(newval!=digitalRead(button_pins[i])) {
+          continue ;
+        }
+
         button_pin_values[i] = newval ;
         if(newval==0) {
           printString("BUTTON-DOWN:") ;
