@@ -61,7 +61,7 @@ int main(void)
   pinMode(SPINDLE_IN2_PIN, OUTPUT) ;
   pinMode(SPINDLE_EN_PIN, OUTPUT) ;
 
-  digitalWrite(Z1_PIN, LOW) ;
+  digitalWrite(Z1_PIN, HIGH) ;
   digitalWrite(Z2_PIN, LOW) ;
   digitalWrite(Z3_PIN, LOW) ;
   digitalWrite(Z4_PIN, LOW) ;
